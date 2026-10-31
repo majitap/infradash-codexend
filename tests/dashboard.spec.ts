@@ -19,6 +19,7 @@ test("every exported route loads without runtime errors or horizontal overflow",
     const response = await page.goto(route || "./");
     expect(response?.status()).toBe(200);
     await expect(page.locator("h1")).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "ko");
     await expect(page.getByRole("main")).toHaveCount(1);
     expect(
       await page.evaluate(
@@ -38,14 +39,14 @@ test("overview chart changes range and exports the mock report", async ({
 }) => {
   await page.goto("./");
   await expect(
-    page.getByRole("img", { name: /30-day pipeline activity/ }),
+    page.getByRole("img", { name: /최근 30일 파이프라인 현황/ }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "7 days", exact: true }).click();
+  await page.getByRole("button", { name: "7일", exact: true }).click();
   await expect(
-    page.getByRole("img", { name: /7-day pipeline activity/ }),
+    page.getByRole("img", { name: /최근 7일 파이프라인 현황/ }),
   ).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export report" }).click();
+  await page.getByRole("button", { name: "보고서 내보내기" }).click();
   expect((await downloadPromise).suggestedFilename()).toBe(
     "infradash-overview.csv",
   );
@@ -55,31 +56,29 @@ test("member search, role filter, pagination, tabs, and detail dialog work", asy
   page,
 }) => {
   await page.goto("users/");
-  await page.getByRole("button", { name: "Next members" }).click();
-  await expect(page.getByText("Page 2 of 2")).toBeVisible();
-  await page.getByRole("textbox", { name: "Search members" }).fill("Sarah");
+  await page.getByRole("button", { name: "다음 구성원 페이지" }).click();
+  await expect(page.getByText("2 / 2 페이지")).toBeVisible();
+  await page.getByRole("textbox", { name: "구성원 검색" }).fill("Sarah");
   await expect(page.locator("tbody tr")).toHaveCount(1);
   await expect(page.locator("tbody")).toContainText("Sarah Kim");
-  await page.getByRole("button", { name: "View Sarah Kim" }).click();
-  await expect(page.getByRole("dialog")).toContainText("Frontend");
-  await page.getByRole("button", { name: "Close", exact: true }).click();
+  await page.getByRole("button", { name: "Sarah Kim 상세 보기" }).click();
+  await expect(page.getByRole("dialog")).toContainText("프론트엔드");
+  await page.getByRole("button", { name: "닫기", exact: true }).click();
   await page
-    .getByRole("textbox", { name: "Search members" })
+    .getByRole("textbox", { name: "구성원 검색" })
     .fill("No such person");
-  await expect(page.getByText("No members found")).toBeVisible();
-  await page.getByRole("button", { name: "Clear filters" }).click();
-  await page
-    .getByRole("combobox", { name: "Filter by role" })
-    .selectOption("Owner");
+  await expect(page.getByText("검색된 구성원이 없어요")).toBeVisible();
+  await page.getByRole("button", { name: "필터 초기화" }).click();
+  await page.getByRole("combobox", { name: "역할 필터" }).selectOption("Owner");
   await expect(page.locator("tbody tr")).toHaveCount(1);
   await expect(page.locator("tbody")).toContainText("Min Ji");
-  await page.getByRole("tab", { name: /Joiners/ }).click();
+  await page.getByRole("tab", { name: /입사자/ }).click();
   await expect(page.locator("tbody tr")).toHaveCount(3);
-  await page.getByRole("tab", { name: /Leavers/ }).click();
+  await page.getByRole("tab", { name: /퇴사자/ }).click();
   await expect(page.locator("tbody tr")).toHaveCount(3);
-  await expect(page.locator("tbody")).toContainText("Deactivated");
+  await expect(page.locator("tbody")).toContainText("비활성");
   await page.reload();
-  await expect(page.getByRole("tab", { name: /Leavers/ })).toHaveAttribute(
+  await expect(page.getByRole("tab", { name: /퇴사자/ })).toHaveAttribute(
     "aria-selected",
     "true",
   );
@@ -89,30 +88,28 @@ test("runner filters, search, and restart dialog stay simulation-only", async ({
   page,
 }) => {
   await page.goto("runners/");
-  await page.getByRole("button", { name: /^Offline/ }).click();
+  await page.getByRole("button", { name: /^오프라인/ }).click();
   await expect(page.locator(".runner-card")).toHaveCount(2);
-  await page.getByRole("button", { name: /^Paused/ }).click();
+  await page.getByRole("button", { name: /^일시중지/ }).click();
   await expect(page.locator(".runner-card")).toHaveCount(2);
-  await page.getByRole("button", { name: /^All runners/ }).click();
-  await page
-    .getByRole("textbox", { name: "Search runners" })
-    .fill("prod-docker-01");
+  await page.getByRole("button", { name: /^전체 러너/ }).click();
+  await page.getByRole("textbox", { name: "러너 검색" }).fill("prod-docker-01");
   await expect(page.locator(".runner-card")).toHaveCount(1);
-  await page.getByRole("button", { name: "Restart prod-docker-01" }).click();
+  await page.getByRole("button", { name: "prod-docker-01 재시작" }).click();
   await expect(page.getByRole("alertdialog")).toContainText(
-    "No runner is restarted",
+    "실제 러너를 재시작하거나 요청을 보내지 않습니다.",
   );
-  await page.getByRole("button", { name: "Cancel", exact: true }).click();
+  await page.getByRole("button", { name: "취소", exact: true }).click();
   await expect(page.getByRole("alertdialog")).toHaveCount(0);
-  await page.getByRole("button", { name: "Restart prod-docker-01" }).click();
+  await page.getByRole("button", { name: "prod-docker-01 재시작" }).click();
   await page
-    .getByRole("button", { name: "Simulate restart", exact: true })
+    .getByRole("button", { name: "재시작 체험하기", exact: true })
     .click();
   await expect(
-    page.getByText("Restart simulated", { exact: true }),
+    page.getByText("재시작 시뮬레이션을 완료했어요", { exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("alertdialog")).toHaveCount(0);
-  await expect(page.locator(".runner-card .status-badge")).toHaveText("online");
+  await expect(page.locator(".runner-card .status-badge")).toHaveText("온라인");
 });
 
 test("upgrade progress persists, updates overview, resets, and exports", async ({
@@ -120,7 +117,7 @@ test("upgrade progress persists, updates overview, resets, and exports", async (
 }) => {
   await page.goto("upgrade/");
   const checkbox = page.getByRole("checkbox", {
-    name: /Confirm background migrations/,
+    name: /백그라운드 마이그레이션 완료 확인/,
   });
   await expect(checkbox).not.toBeChecked();
   await checkbox.check();
@@ -129,15 +126,15 @@ test("upgrade progress persists, updates overview, resets, and exports", async (
   await expect(checkbox).toBeChecked();
   await page.goto("./");
   await expect(page.locator(".upgrade-progress-label")).toContainText(
-    "8 of 12",
+    "12개 중 8개 완료",
   );
   await page.goto("upgrade/");
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export plan" }).click();
+  await page.getByRole("button", { name: "계획 내보내기" }).click();
   expect((await downloadPromise).suggestedFilename()).toBe(
     "infradash-upgrade-plan.txt",
   );
-  await page.getByRole("button", { name: "Reset demo checklist" }).click();
+  await page.getByRole("button", { name: "데모 체크리스트 초기화" }).click();
   await expect(checkbox).not.toBeChecked();
   await expect(page.locator(".checklist-progress")).toContainText("58%");
 });
@@ -146,14 +143,14 @@ test("quick navigation, notifications, and profile are usable", async ({
   page,
 }) => {
   await page.goto("./");
-  await page.getByRole("button", { name: "Search pages" }).click();
-  await page.getByRole("combobox").fill("runners");
-  await page.getByRole("option", { name: /Runners/ }).click();
+  await page.getByRole("button", { name: "페이지 검색" }).click();
+  await page.getByRole("combobox").fill("러너");
+  await page.getByRole("option", { name: /러너/ }).click();
   await expect(page).toHaveURL(/runners\/$/);
-  await page.getByRole("button", { name: "View notifications" }).click();
-  await expect(page.getByRole("dialog")).toContainText("Workspace updates");
-  await page.getByRole("button", { name: "Close", exact: true }).click();
-  await page.getByRole("button", { name: "View profile" }).click();
+  await page.getByRole("button", { name: "알림 보기" }).click();
+  await expect(page.getByRole("dialog")).toContainText("워크스페이스 알림");
+  await page.getByRole("button", { name: "닫기", exact: true }).click();
+  await page.getByRole("button", { name: "프로필 보기" }).click();
   await expect(page.getByRole("dialog")).toContainText("Min Ji");
 });
 
@@ -162,10 +159,10 @@ test("sidebar navigation supports all four pages", async ({
   isMobile,
 }) => {
   await page.goto("./");
-  for (const title of ["Users", "Runners", "Upgrade", "Overview"]) {
+  for (const title of ["사용자", "러너", "업그레이드", "개요"]) {
     if (isMobile)
-      await page.getByRole("button", { name: "Toggle Sidebar" }).click();
-    const nav = page.getByRole("navigation", { name: "Main navigation" });
+      await page.getByRole("button", { name: "사이드바 열기/닫기" }).click();
+    const nav = page.getByRole("navigation", { name: "주 메뉴" });
     await nav.getByRole("link", { name: new RegExp("^" + title) }).click();
     await expect(page.locator("h1")).toBeVisible();
     if (!isMobile)

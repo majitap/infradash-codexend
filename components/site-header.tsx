@@ -40,7 +40,7 @@ export function SiteHeader() {
       item.url === "/"
         ? pathname === "/"
         : pathname.startsWith(item.url.replace(/\/$/, "")),
-    )?.title ?? "Workspace";
+    )?.title ?? "워크스페이스";
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -56,7 +56,7 @@ export function SiteHeader() {
       <header className="site-header">
         <div className="breadcrumb">
           <SidebarTrigger className="sidebar-toggle" />
-          <span className="breadcrumb-workspace">Workspace</span>
+          <span className="breadcrumb-workspace">워크스페이스</span>
           <ChevronRight size={14} className="breadcrumb-workspace" />
           <span>{current}</span>
         </div>
@@ -65,10 +65,10 @@ export function SiteHeader() {
             variant="ghost"
             className="search-trigger"
             onClick={() => setSearchOpen(true)}
-            aria-label="Search pages"
+            aria-label="페이지 검색"
           >
             <Search size={16} />
-            <span>Jump to page...</span>
+            <span>페이지 바로가기...</span>
             <kbd>
               <CommandIcon size={11} /> K
             </kbd>
@@ -81,7 +81,7 @@ export function SiteHeader() {
             variant="ghost"
             size="icon"
             className="notification-button"
-            aria-label="View notifications"
+            aria-label="알림 보기"
             onClick={() => setNotificationsOpen(true)}
           >
             <Bell size={18} />
@@ -89,7 +89,7 @@ export function SiteHeader() {
           </Button>
           <button
             className="avatar avatar-violet header-avatar"
-            aria-label="View profile"
+            aria-label="프로필 보기"
             onClick={() => setProfileOpen(true)}
           >
             {workspace.person.initials}
@@ -99,15 +99,15 @@ export function SiteHeader() {
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
         <DialogContent className="search-dialog" showCloseButton={false}>
           <DialogHeader className="sr-only">
-            <DialogTitle>Jump to a page</DialogTitle>
+            <DialogTitle>페이지 바로가기</DialogTitle>
             <DialogDescription>
-              Search the four workspace pages.
+              이동할 워크스페이스 페이지를 검색하세요.
             </DialogDescription>
           </DialogHeader>
           <Command>
-            <CommandInput placeholder="Where would you like to go?" />
+            <CommandInput placeholder="어떤 페이지를 찾으세요?" />
             <CommandList>
-              <CommandEmpty>No pages found.</CommandEmpty>
+              <CommandEmpty>검색된 페이지가 없어요.</CommandEmpty>
               {navigation.map((item) => (
                 <CommandItem
                   key={item.url}
@@ -131,9 +131,9 @@ export function SiteHeader() {
       <Dialog open={notificationsOpen} onOpenChange={setNotificationsOpen}>
         <DialogContent className="detail-dialog">
           <DialogHeader>
-            <DialogTitle>Workspace updates</DialogTitle>
+            <DialogTitle>워크스페이스 알림</DialogTitle>
             <DialogDescription>
-              Three updates from your demo snapshot.
+              데모 데이터 기준으로 확인할 알림 3건입니다.
             </DialogDescription>
           </DialogHeader>
           <div className="notification-list">
@@ -157,10 +157,8 @@ export function SiteHeader() {
       <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
         <DialogContent className="detail-dialog">
           <DialogHeader>
-            <DialogTitle>Your workspace profile</DialogTitle>
-            <DialogDescription>
-              This is a fictional demo account.
-            </DialogDescription>
+            <DialogTitle>내 워크스페이스 프로필</DialogTitle>
+            <DialogDescription>예시로 만든 데모 계정입니다.</DialogDescription>
           </DialogHeader>
           <div className="profile-summary">
             <span className="avatar avatar-violet">

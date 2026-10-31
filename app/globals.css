@@ -5,8 +5,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-heading: var(--font-geist-sans);
+  --font-sans:
+    var(--font-geist-sans), var(--font-noto-sans-kr), "Apple SD Gothic Neo",
+    "Malgun Gothic", sans-serif;
+  --font-heading: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --color-card: var(--card);
   --color-card-foreground: var(--foreground);
@@ -2914,4 +2916,32 @@ body {
   max-width: 100%;
   contain: inline-size;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Korean copy keeps words together and remains readable on narrow screens. */
+:lang(ko) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+:lang(ko) .eyebrow,
+:lang(ko) .nav-eyebrow {
+  letter-spacing: 0.08em;
+}
+:lang(ko) .page-heading h1 {
+  line-height: 1.5;
+  letter-spacing: -0.04em;
+}
+:lang(ko) .page-heading p,
+:lang(ko) .attention-row p {
+  line-height: 1.8;
+}
+:lang(ko) .metric-caption {
+  white-space: normal;
+  align-items: center;
+}
+:lang(ko) .metric-change {
+  flex-shrink: 0;
+}
+:lang(ko) .health-banner strong {
+  line-height: 1.8;
 }

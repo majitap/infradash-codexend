@@ -2,6 +2,8 @@
 
 A calm, carefully spaced control room for GitLab infrastructure.
 
+The interface is in Korean. Product names, runner identifiers/tags, and GitLab permission roles (Owner, Maintainer, Developer, Reporter) retain their original names. Korean text uses a self-hosted Noto Sans KR font, Korean date labels, and word-aware wrapping.
+
 **Live:** https://majitap.github.io/infradash-codexend/
 
 This is a separate project from `hanjin` and the existing `infradash` repository. The requested final URL takes precedence over the `infradash` name in the original setup checklist: both repository and Next.js basePath use `infradash-codexend`.

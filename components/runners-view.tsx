@@ -38,6 +38,7 @@ import {
   ExportButton,
   PageHeading,
 } from "@/components/dashboard-ui";
+import { runnerStatusLabels } from "@/lib/labels";
 import { runners, type Runner, type RunnerStatus } from "@/lib/mock-data";
 
 export function RunnersView() {
@@ -57,26 +58,34 @@ export function RunnersView() {
   const currentPage = Math.min(page, pageCount - 1);
   const visible = filtered.slice(currentPage * 6, currentPage * 6 + 6);
   const statuses = [
-    { key: "all", label: "All runners", Icon: Server, color: "violet" },
-    { key: "online", label: "Online", Icon: Radio, color: "green" },
-    { key: "offline", label: "Offline", Icon: WifiOff, color: "amber" },
-    { key: "paused", label: "Paused", Icon: Pause, color: "gray" },
+    { key: "all", label: "전체 러너", Icon: Server, color: "violet" },
+    { key: "online", label: "온라인", Icon: Radio, color: "green" },
+    { key: "offline", label: "오프라인", Icon: WifiOff, color: "amber" },
+    { key: "paused", label: "일시중지", Icon: Pause, color: "gray" },
   ] as const;
   return (
     <>
       <PageHeading
-        eyebrow="YOUR RUNNER FLEET"
-        title="Ready for the next build."
-        description="A healthy fleet keeps good ideas moving. Keep yours in view."
+        eyebrow="내 러너 현황"
+        title="다음 빌드를 위한 준비."
+        description="안정적인 러너가 좋은 아이디어를 이어갑니다. 상태를 한눈에 살펴보세요."
       >
         <ExportButton
           filename="infradash-runners"
           rows={[
-            ["Runner", "ID", "Status", "Executor", "CPU %", "Memory %", "Jobs"],
+            [
+              "러너",
+              "ID",
+              "상태",
+              "Executor",
+              "CPU 사용률(%)",
+              "메모리 사용률(%)",
+              "실행 중인 작업",
+            ],
             ...filtered.map((runner) => [
               runner.name,
               runner.id,
-              runner.status,
+              runnerStatusLabels[runner.status],
               runner.executor,
               runner.cpu,
               runner.memory,
@@ -114,14 +123,14 @@ export function RunnersView() {
       </div>
       <div className="fleet-toolbar">
         <div>
-          <h2>Runner inventory</h2>
-          <span>{filtered.length} sample runners</span>
+          <h2>러너 목록</h2>
+          <span>예시 러너 {filtered.length}대</span>
         </div>
         <label className="search-field">
           <Search size={16} />
           <input
-            aria-label="Search runners"
-            placeholder="Search name, tag, or executor..."
+            aria-label="러너 검색"
+            placeholder="이름, 태그, Executor로 검색..."
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -143,7 +152,7 @@ export function RunnersView() {
                     className={`status-badge ${runner.status === "online" ? "green" : runner.status === "offline" ? "amber" : "gray"}`}
                   >
                     <span className="status-dot" />
-                    {runner.status}
+                    {runnerStatusLabels[runner.status]}
                   </span>
                 </div>
                 <button
@@ -167,7 +176,7 @@ export function RunnersView() {
                   {[
                     { label: "CPU", value: runner.cpu, Icon: Cpu },
                     {
-                      label: "Memory",
+                      label: "메모리",
                       value: runner.memory,
                       Icon: MemoryStick,
                     },
@@ -193,17 +202,17 @@ export function RunnersView() {
                 <div className="runner-card-bottom">
                   <span>
                     {runner.status === "online"
-                      ? `${runner.jobs} active jobs`
+                      ? `실행 중인 작업 ${runner.jobs}개`
                       : runner.lastSeen}
                   </span>
                   <Button
                     variant="outline"
                     className="restart-button"
-                    aria-label={`Restart ${runner.name}`}
+                    aria-label={`${runner.name} 재시작`}
                     onClick={() => setRestarting(runner)}
                   >
                     <RotateCw size={13} />
-                    Restart
+                    재시작
                   </Button>
                 </div>
               </article>
@@ -211,27 +220,26 @@ export function RunnersView() {
           </div>
           <div className="fleet-pagination table-pagination">
             <span>
-              {currentPage * 6 + 1}–
-              {Math.min((currentPage + 1) * 6, filtered.length)} of{" "}
-              {filtered.length} runners
+              총 {filtered.length}대 중 {currentPage * 6 + 1}–
+              {Math.min((currentPage + 1) * 6, filtered.length)}대
             </span>
             <div>
               <Button
                 variant="outline"
                 size="icon"
-                aria-label="Previous runners"
+                aria-label="이전 러너 페이지"
                 disabled={currentPage === 0}
                 onClick={() => setPage(currentPage - 1)}
               >
                 <ChevronLeft size={16} />
               </Button>
               <span>
-                Page {currentPage + 1} of {pageCount}
+                {currentPage + 1} / {pageCount} 페이지
               </span>
               <Button
                 variant="outline"
                 size="icon"
-                aria-label="Next runners"
+                aria-label="다음 러너 페이지"
                 disabled={currentPage >= pageCount - 1}
                 onClick={() => setPage(currentPage + 1)}
               >
@@ -243,8 +251,8 @@ export function RunnersView() {
       ) : (
         <div className="panel">
           <EmptyState
-            title="No runners found"
-            description="Try another name, tag, or status."
+            title="검색된 러너가 없어요"
+            description="다른 이름, 태그, 상태로 검색해 보세요."
             action={
               <Button
                 variant="outline"
@@ -254,7 +262,7 @@ export function RunnersView() {
                   setPage(0);
                 }}
               >
-                Clear filters
+                필터 초기화
               </Button>
             }
           />
@@ -263,10 +271,9 @@ export function RunnersView() {
       <div className="info-strip">
         <RotateCw size={18} />
         <div>
-          <strong>Try it with confidence.</strong>
+          <strong>부담 없이 기능을 살펴보세요.</strong>
           <span>
-            Restart actions are simulated. Your real infrastructure is never
-            connected.
+            재시작은 시뮬레이션으로 동작하며, 실제 인프라에 연결하지 않습니다.
           </span>
         </div>
       </div>
@@ -281,25 +288,25 @@ export function RunnersView() {
             <span className="dialog-icon">
               <RotateCw size={22} />
             </span>
-            <AlertDialogTitle>Simulate a runner restart?</AlertDialogTitle>
+            <AlertDialogTitle>러너 재시작을 체험할까요?</AlertDialogTitle>
             <AlertDialogDescription>
-              Try a restart for <strong>{restarting?.name}</strong>. This demo
-              only shows a confirmation toast. No runner is restarted and no
-              request is sent.
+              대상 러너: <strong>{restarting?.name}</strong> · 확인 후 안내
+              메시지만 표시합니다. 실제 러너를 재시작하거나 요청을 보내지
+              않습니다.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 const name = restarting?.name;
                 setRestarting(null);
-                toast.success("Restart simulated", {
-                  description: `${name} is unchanged. No infrastructure action was performed.`,
+                toast.success("재시작 시뮬레이션을 완료했어요", {
+                  description: `${name}의 상태는 그대로예요. 실제 인프라 작업은 수행하지 않았습니다.`,
                 });
               }}
             >
-              Simulate restart
+              재시작 체험하기
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -312,35 +319,35 @@ export function RunnersView() {
       >
         <DialogContent className="detail-dialog">
           <DialogHeader>
-            <DialogTitle>{selected?.name ?? "Runner details"}</DialogTitle>
+            <DialogTitle>{selected?.name ?? "러너 상세 정보"}</DialogTitle>
             <DialogDescription>
-              Fictional runner configuration and status.
+              예시 러너의 설정과 상태입니다.
             </DialogDescription>
           </DialogHeader>
           {selected && (
             <dl className="detail-list">
               <div>
-                <dt>Runner ID</dt>
+                <dt>러너 ID</dt>
                 <dd>{selected.id}</dd>
               </div>
               <div>
-                <dt>Status</dt>
-                <dd>{selected.status}</dd>
+                <dt>상태</dt>
+                <dd>{runnerStatusLabels[selected.status]}</dd>
               </div>
               <div>
                 <dt>Executor</dt>
                 <dd>{selected.executor}</dd>
               </div>
               <div>
-                <dt>Platform</dt>
+                <dt>플랫폼</dt>
                 <dd>{selected.platform}</dd>
               </div>
               <div>
-                <dt>Version</dt>
+                <dt>버전</dt>
                 <dd>{selected.version}</dd>
               </div>
               <div>
-                <dt>Last seen</dt>
+                <dt>마지막 응답</dt>
                 <dd>{selected.lastSeen}</dd>
               </div>
             </dl>

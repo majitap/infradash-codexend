@@ -48,7 +48,7 @@ export function AppSidebar() {
           href="/"
           onClick={closeMobile}
           className="brand-link"
-          aria-label="Infradash overview"
+          aria-label="Infradash 개요"
         >
           <BrandMark />
           <span>
@@ -59,14 +59,14 @@ export function AppSidebar() {
           <span className="workspace-monogram">O</span>
           <div>
             <strong>{workspace.name}</strong>
-            <span>Platform workspace</span>
+            <span>플랫폼 워크스페이스</span>
           </div>
           <ChevronDown size={16} aria-hidden="true" />
         </div>
       </SidebarHeader>
       <SidebarContent className="sidebar-content">
-        <div className="nav-eyebrow">WORKSPACE</div>
-        <nav aria-label="Main navigation" className="main-nav">
+        <div className="nav-eyebrow">워크스페이스</div>
+        <nav aria-label="주 메뉴" className="main-nav">
           {navigation.map((item, index) => {
             const Icon = icons[index];
             const active =
@@ -83,7 +83,7 @@ export function AppSidebar() {
               >
                 <Icon size={19} strokeWidth={1.8} />
                 <span>{item.title}</span>
-                {item.title === "Upgrade" && (
+                {item.url === "/upgrade/" && (
                   <span className="nav-count">{percent}%</span>
                 )}
                 {active && <span className="nav-active-dot" />}
@@ -96,19 +96,20 @@ export function AppSidebar() {
             <Sparkles size={18} />
           </span>
           <strong>
-            A little clarity.
-            <br />A lot of possibility.
+            한눈에 살피고,
+            <br />
+            차분하게 운영하세요.
           </strong>
-          <p>Your infrastructure, in one calm place.</p>
+          <p>인프라 운영에 필요한 정보를 한곳에 담았어요.</p>
           <Link href="/upgrade/" onClick={closeMobile}>
-            Plan your next upgrade <ArrowUpRight size={16} />
+            다음 업그레이드 준비 <ArrowUpRight size={16} />
           </Link>
         </div>
       </SidebarContent>
       <SidebarFooter className="sidebar-footer">
         <div className="demo-label">
           <FlaskConical size={15} />
-          <span>Demo workspace</span>
+          <span>데모 워크스페이스</span>
           <span className="subtle-dot" />
         </div>
         <div className="sidebar-person">
@@ -119,7 +120,7 @@ export function AppSidebar() {
             <strong>{workspace.person.name}</strong>
             <span>{workspace.person.role}</span>
           </div>
-          <span className="person-online" title="Demo account" />
+          <span className="person-online" title="데모 계정" />
         </div>
       </SidebarFooter>
     </Sidebar>

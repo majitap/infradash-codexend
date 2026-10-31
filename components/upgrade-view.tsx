@@ -25,10 +25,10 @@ export function UpgradeView() {
   const { completed, percent, toggle, reset } = useUpgradeProgress();
   function exportPlan() {
     const text = [
-      `Infradash — sample upgrade plan`,
+      "Infradash — 데모 업그레이드 계획",
       `${upgrade.current} → ${upgrade.target}`,
-      `Window: ${upgrade.maintenanceWindow}`,
-      "Illustrative demo only. This is not a verified GitLab upgrade path.",
+      `점검 시간: ${upgrade.maintenanceWindow}`,
+      "데모용 예시이며, 검증된 GitLab 업그레이드 경로가 아닙니다.",
       "",
       ...upgrade.phases.flatMap((phase) => [
         phase.name,
@@ -47,14 +47,14 @@ export function UpgradeView() {
     link.download = "infradash-upgrade-plan.txt";
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    toast.success("Your sample upgrade plan is ready.");
+    toast.success("데모 업그레이드 계획을 내보냈어요.");
   }
   return (
     <>
       <PageHeading
-        eyebrow="A THOUGHTFUL NEXT STEP"
-        title="Move forward. With a plan."
-        description="Turn your next GitLab upgrade into a series of small, clear steps."
+        eyebrow="차분하게 준비하는 다음 단계"
+        title="계획과 함께, 다음 버전으로."
+        description="GitLab 업그레이드에 필요한 준비를 단계별로 정리했어요."
       >
         <Button
           variant="outline"
@@ -62,23 +62,23 @@ export function UpgradeView() {
           onClick={exportPlan}
         >
           <Download size={16} />
-          Export plan
+          계획 내보내기
         </Button>
       </PageHeading>
       <section className="upgrade-hero">
         <div>
           <span className="eyebrow">
             <Layers3 size={14} />
-            YOUR UPGRADE JOURNEY
+            업그레이드 경로
           </span>
           <h2>
-            A newer version.
-            <br /> The same peace of mind.
+            더 새로운 버전으로,
+            <br /> 안정적인 운영은 그대로.
           </h2>
-          <p>A sample plan for a well-prepared platform team.</p>
+          <p>플랫폼 팀을 위한 업그레이드 계획 예시입니다.</p>
           <span className="sample-plan-badge">
             <FlaskConical size={13} />
-            Illustrative demo path
+            데모용 예시 경로
           </span>
         </div>
         <div className="version-route">
@@ -95,9 +95,9 @@ export function UpgradeView() {
                       {upgrade.edition}
                     </>
                   ) : index === 1 ? (
-                    "Planned patch stop"
+                    "중간 패치 적용"
                   ) : (
-                    "Your destination"
+                    "업그레이드 목표"
                   )}
                 </span>
               </div>
@@ -108,8 +108,8 @@ export function UpgradeView() {
       <div className="upgrade-layout">
         <section className="panel checklist-panel">
           <PanelHeading
-            title="The little things that add up"
-            description="Work through your plan, one check at a time."
+            title="하나씩 확인하는 준비 사항"
+            description="체크리스트를 따라 차근차근 준비하세요."
           >
             <span className="count-badge">
               {completed.length} / {upgradeTotal}
@@ -119,8 +119,8 @@ export function UpgradeView() {
             <div>
               <span>
                 {percent === 100
-                  ? "All checks complete. Nicely done."
-                  : "Your preparation is taking shape."}
+                  ? "모든 점검을 마쳤어요. 준비가 끝났습니다."
+                  : "업그레이드를 차근차근 준비하고 있어요."}
               </span>
               <strong>{percent}%</strong>
             </div>
@@ -181,27 +181,27 @@ export function UpgradeView() {
         </section>
         <aside className="upgrade-side">
           <section className="panel plan-details">
-            <PanelHeading title="The plan, at a glance" />
+            <PanelHeading title="업그레이드 계획 요약" />
             <dl>
               <div>
                 <CalendarDays size={17} />
-                <dt>Maintenance window</dt>
+                <dt>예정된 점검 시간</dt>
                 <dd>{upgrade.maintenanceWindow}</dd>
               </div>
               <div>
                 <Clock3 size={17} />
-                <dt>Estimated duration</dt>
+                <dt>예상 소요 시간</dt>
                 <dd>{upgrade.estimatedDuration}</dd>
               </div>
               <div>
                 <Users size={17} />
-                <dt>Plan owner</dt>
+                <dt>담당 팀</dt>
                 <dd>{upgrade.owner}</dd>
               </div>
               <div>
                 <ShieldCheck size={17} />
-                <dt>Environment</dt>
-                <dd>Demo workspace</dd>
+                <dt>환경</dt>
+                <dd>데모 워크스페이스</dd>
               </div>
             </dl>
           </section>
@@ -215,29 +215,29 @@ export function UpgradeView() {
             </span>
             <h3>
               {percent === 100
-                ? "All set. Well prepared."
-                : "Progress worth keeping."}
+                ? "모든 준비를 마쳤어요."
+                : "준비한 내용은 저장해 둘게요."}
             </h3>
             <p>
-              Your checklist is saved in this browser. Pick up right where you
-              left off.
+              체크리스트는 이 브라우저에 저장돼요. 다음에도 이어서 준비할 수
+              있어요.
             </p>
             <div>
               <CheckCheck size={16} />
               <strong>
-                {completed.length} of {upgradeTotal} checks complete
+                {upgradeTotal}개 중 {completed.length}개 완료
               </strong>
             </div>
             <Button variant="ghost" className="reset-checklist" onClick={reset}>
               <RotateCcw size={14} />
-              Reset demo checklist
+              데모 체크리스트 초기화
             </Button>
           </section>
           <div className="upgrade-demo-note">
             <FlaskConical size={16} />
             <p>
-              This is a planning demo. Version stops are illustrative and do not
-              define a verified GitLab upgrade path.
+              업그레이드 준비를 위한 데모입니다. 표시된 중간 버전은 예시이며,
+              검증된 GitLab 업그레이드 경로가 아닙니다.
             </p>
           </div>
         </aside>

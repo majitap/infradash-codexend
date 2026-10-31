@@ -32,7 +32,7 @@ function save(value: string) {
     window.localStorage.setItem(key, value);
   } catch {
     toast.info(
-      "Progress saved for this session. Browser storage is unavailable.",
+      "브라우저 저장 공간을 사용할 수 없어 이번 세션에만 진행 상태를 저장했어요.",
     );
   }
   window.dispatchEvent(new Event(eventName));
@@ -70,7 +70,7 @@ export function useUpgradeProgress() {
     },
     reset: () => {
       save(initial);
-      toast.success("Checklist reset to the demo snapshot.");
+      toast.success("체크리스트를 데모 초기 상태로 되돌렸어요.");
     },
   };
 }

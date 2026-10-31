@@ -27,6 +27,7 @@ import {
   ExportButton,
   PageHeading,
 } from "@/components/dashboard-ui";
+import { memberStatusLabels } from "@/lib/labels";
 import { members, workspace, type Member } from "@/lib/mock-data";
 
 type Tab = "all" | "joiners" | "leavers";
@@ -78,20 +79,20 @@ export function UsersView() {
   return (
     <>
       <PageHeading
-        eyebrow="PEOPLE & ACCESS"
-        title="Good teams start with people."
-        description="Keep your workspace welcoming. Keep your access intentional."
+        eyebrow="사용자 및 접근 권한"
+        title="좋은 팀의 시작은, 사람."
+        description="구성원은 편하게 협업하고, 접근 권한은 꼼꼼하게 관리하세요."
       >
         <ExportButton
           filename="infradash-users"
           rows={[
-            ["Name", "Email", "Team", "Role", "Status"],
+            ["이름", "이메일", "팀", "역할", "상태"],
             ...filtered.map((member) => [
               member.name,
               member.email,
               member.team,
               member.role,
-              member.status,
+              memberStatusLabels[member.status],
             ]),
           ]}
         />
@@ -99,23 +100,23 @@ export function UsersView() {
       <div className="people-stats">
         {[
           {
-            label: "Workspace members",
-            value: workspace.totalUsers.toLocaleString("en-US"),
-            text: `of ${workspace.seats.toLocaleString("en-US")} available seats`,
+            label: "워크스페이스 구성원",
+            value: workspace.totalUsers.toLocaleString("ko-KR"),
+            text: `전체 ${workspace.seats.toLocaleString("ko-KR")}석 중`,
             Icon: Users,
             color: "violet",
           },
           {
-            label: "Joined this month",
+            label: "이번 달 입사자",
             value: workspace.newUsers,
-            text: "A little more collective possibility",
+            text: "새로운 동료와 함께하는 시작",
             Icon: UserPlus,
             color: "green",
           },
           {
-            label: "Departed this month",
+            label: "이번 달 퇴사자",
             value: workspace.departingUsers,
-            text: "All departing access removed",
+            text: "접근 권한 해제 완료",
             Icon: UserMinus,
             color: "amber",
           },
@@ -134,16 +135,12 @@ export function UsersView() {
       </div>
       <section className="panel users-panel">
         <div className="table-top">
-          <div
-            className="page-tabs"
-            role="tablist"
-            aria-label="Member lifecycle"
-          >
+          <div className="page-tabs" role="tablist" aria-label="구성원 구분">
             {(
               [
-                { id: "all", label: "All members" },
-                { id: "joiners", label: "Joiners" },
-                { id: "leavers", label: "Leavers" },
+                { id: "all", label: "전체 구성원" },
+                { id: "joiners", label: "입사자" },
+                { id: "leavers", label: "퇴사자" },
               ] as const
             ).map((item) => (
               <button
@@ -183,15 +180,15 @@ export function UsersView() {
               </button>
             ))}
           </div>
-          <span className="sample-label">Showing sample accounts</span>
+          <span className="sample-label">예시 계정 목록</span>
         </div>
         <div id="members-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
           <div className="table-toolbar">
             <label className="search-field">
               <Search size={16} />
               <input
-                aria-label="Search members"
-                placeholder="Search by name, email, or team..."
+                aria-label="구성원 검색"
+                placeholder="이름, 이메일, 팀으로 검색..."
                 value={query}
                 onChange={(event) => {
                   setQuery(event.target.value);
@@ -199,22 +196,22 @@ export function UsersView() {
                 }}
               />
               {query && (
-                <button aria-label="Clear search" onClick={() => setQuery("")}>
+                <button aria-label="검색어 지우기" onClick={() => setQuery("")}>
                   <X size={14} />
                 </button>
               )}
             </label>
             <label className="select-label">
-              Role
+              역할
               <select
-                aria-label="Filter by role"
+                aria-label="역할 필터"
                 value={role}
                 onChange={(event) => {
                   setRole(event.target.value);
                   setPage(0);
                 }}
               >
-                <option value="all">All roles</option>
+                <option value="all">전체 역할</option>
                 {["Owner", "Maintainer", "Developer", "Reporter"].map(
                   (value) => (
                     <option key={value}>{value}</option>
@@ -226,7 +223,7 @@ export function UsersView() {
           {tab === "leavers" && (
             <div className="table-notice">
               <ShieldCheck size={16} />
-              Access has been removed for all departing sample members.
+              모든 예시 퇴사자의 접근 권한이 해제되었습니다.
             </div>
           )}
           {filtered.length ? (
@@ -240,7 +237,7 @@ export function UsersView() {
                         aria-sort={ascending ? "ascending" : "descending"}
                       >
                         <button onClick={() => setAscending((value) => !value)}>
-                          Member
+                          구성원
                           {ascending ? (
                             <ArrowDown size={13} />
                           ) : (
@@ -248,14 +245,14 @@ export function UsersView() {
                           )}
                         </button>
                       </th>
-                      <th scope="col">Team</th>
-                      <th scope="col">Role</th>
-                      <th scope="col">Status</th>
+                      <th scope="col">팀</th>
+                      <th scope="col">역할</th>
+                      <th scope="col">상태</th>
                       <th scope="col">
-                        {tab === "all" ? "Activity" : "Lifecycle"}
+                        {tab === "all" ? "최근 활동" : "입퇴사 현황"}
                       </th>
                       <th scope="col">
-                        <span className="sr-only">Details</span>
+                        <span className="sr-only">상세 정보</span>
                       </th>
                     </tr>
                   </thead>
@@ -282,7 +279,7 @@ export function UsersView() {
                             className={`status-badge ${member.status === "Active" ? "green" : member.status === "Invited" ? "violet" : "gray"}`}
                           >
                             <span className="status-dot" />
-                            {member.status}
+                            {memberStatusLabels[member.status]}
                           </span>
                         </td>
                         <td className="activity-cell">{member.activity}</td>
@@ -290,7 +287,7 @@ export function UsersView() {
                           <Button
                             size="icon"
                             variant="ghost"
-                            aria-label={`View ${member.name}`}
+                            aria-label={`${member.name} 상세 보기`}
                             onClick={() => setSelected(member)}
                           >
                             <ArrowUpRight size={16} />
@@ -303,27 +300,26 @@ export function UsersView() {
               </div>
               <div className="table-pagination">
                 <span>
-                  {currentPage * 6 + 1}–
-                  {Math.min((currentPage + 1) * 6, filtered.length)} of{" "}
-                  {filtered.length} sample members
+                  총 {filtered.length}명 중 {currentPage * 6 + 1}–
+                  {Math.min((currentPage + 1) * 6, filtered.length)}명
                 </span>
                 <div>
                   <Button
                     variant="outline"
                     size="icon"
-                    aria-label="Previous members"
+                    aria-label="이전 구성원 페이지"
                     disabled={currentPage === 0}
                     onClick={() => setPage(currentPage - 1)}
                   >
                     <ChevronLeft size={16} />
                   </Button>
                   <span>
-                    Page {currentPage + 1} of {pageCount}
+                    {currentPage + 1} / {pageCount} 페이지
                   </span>
                   <Button
                     variant="outline"
                     size="icon"
-                    aria-label="Next members"
+                    aria-label="다음 구성원 페이지"
                     disabled={currentPage >= pageCount - 1}
                     onClick={() => setPage(currentPage + 1)}
                   >
@@ -334,11 +330,11 @@ export function UsersView() {
             </>
           ) : (
             <EmptyState
-              title="No members found"
-              description="Try a different name, team, or role."
+              title="검색된 구성원이 없어요"
+              description="다른 이름이나 팀, 역할로 검색해 보세요."
               action={
                 <Button variant="outline" onClick={reset}>
-                  Clear filters
+                  필터 초기화
                 </Button>
               }
             />
@@ -348,12 +344,12 @@ export function UsersView() {
       <div className="info-strip">
         <ShieldCheck size={18} />
         <div>
-          <strong>Thoughtful access. A stronger workspace.</strong>
+          <strong>꼼꼼한 권한 관리가, 안전한 협업으로.</strong>
           <span>
-            Regularly review member roles and keep offboarding on your radar.
+            구성원의 역할을 주기적으로 검토하고 퇴사자 권한 해제를 확인하세요.
           </span>
         </div>
-        <span className="sample-label">Demo directory</span>
+        <span className="sample-label">데모 사용자 목록</span>
       </div>
       <Dialog
         open={!!selected}
@@ -363,9 +359,9 @@ export function UsersView() {
       >
         <DialogContent className="detail-dialog">
           <DialogHeader>
-            <DialogTitle>Member details</DialogTitle>
+            <DialogTitle>구성원 상세 정보</DialogTitle>
             <DialogDescription>
-              A sample member of {workspace.name}.
+              {workspace.name}의 예시 구성원입니다.
             </DialogDescription>
           </DialogHeader>
           {selected && (
@@ -381,19 +377,19 @@ export function UsersView() {
               </div>
               <dl className="detail-list">
                 <div>
-                  <dt>Team</dt>
+                  <dt>팀</dt>
                   <dd>{selected.team}</dd>
                 </div>
                 <div>
-                  <dt>Role</dt>
+                  <dt>역할</dt>
                   <dd>{selected.role}</dd>
                 </div>
                 <div>
-                  <dt>Account status</dt>
-                  <dd>{selected.status}</dd>
+                  <dt>계정 상태</dt>
+                  <dd>{memberStatusLabels[selected.status]}</dd>
                 </div>
                 <div>
-                  <dt>Latest activity</dt>
+                  <dt>최근 활동</dt>
                   <dd>{selected.activity}</dd>
                 </div>
               </dl>

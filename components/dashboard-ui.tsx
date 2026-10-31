@@ -75,14 +75,14 @@ export function ExportButton({
     link.download = `${filename}.csv`;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    toast.success("Your demo report is ready.", {
-      description: "CSV exported from this workspace’s sample data.",
+    toast.success("데모 보고서를 내보냈어요.", {
+      description: "워크스페이스의 예시 데이터를 CSV로 저장했습니다.",
     });
   }
   return (
     <Button variant="outline" className="action-button" onClick={download}>
       <Download size={16} />
-      Export report
+      보고서 내보내기
     </Button>
   );
 }
@@ -106,7 +106,7 @@ export function MetricCards() {
               height="48"
               viewBox="0 0 88 48"
               role="img"
-              aria-label={`${metric.label} sample trend`}
+              aria-label={`${metric.label} 예시 추이`}
             >
               <path
                 d={`M ${metric.points.map((point, index) => `${index * 8} ${48 - point * 0.7}`).join(" L ")}`}
@@ -140,10 +140,11 @@ export function DemoFooter() {
   return (
     <footer className="demo-footer">
       <span>
-        <FlaskConical size={14} />A little demo. A bigger picture.{" "}
-        <span className="footer-extra">All workspace data is simulated.</span>
+        <FlaskConical size={14} />
+        인프라를 한눈에, 운영은 차분하게.{" "}
+        <span className="footer-extra">모든 데이터는 데모용입니다.</span>
       </span>
-      <span>Snapshot · {workspace.snapshot}</span>
+      <span>데이터 기준 · {workspace.snapshot}</span>
     </footer>
   );
 }

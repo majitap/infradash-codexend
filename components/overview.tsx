@@ -38,6 +38,7 @@ import {
   upgradeTotal,
   workspace,
 } from "@/lib/mock-data";
+import { runnerStatusLabels } from "@/lib/labels";
 import { useUpgradeProgress } from "@/hooks/use-upgrade-progress";
 
 export function Overview() {
@@ -50,9 +51,9 @@ export function Overview() {
   return (
     <>
       <PageHeading
-        eyebrow="YOUR CONTROL ROOM"
-        title="Infrastructure, at a glance."
-        description="A clearer view of your GitLab. More room to build."
+        eyebrow="내 인프라 현황"
+        title="인프라 현황을 한눈에."
+        description="GitLab 운영은 더 명확하게, 개발에 더 집중할 수 있도록."
       >
         <span className="date-label">
           <Clock3 size={15} />
@@ -60,7 +61,7 @@ export function Overview() {
         </span>
         <ExportButton
           rows={[
-            ["Metric", "Value", "Comparison"],
+            ["지표", "값", "비교"],
             ...metrics.map((metric) => [
               metric.label,
               metric.value + metric.unit,
@@ -74,25 +75,23 @@ export function Overview() {
           <span className="health-icon">
             <Check size={14} strokeWidth={3} />
           </span>
-          <strong>Your GitLab instance is healthy</strong>
-          <span className="health-detail">
-            All core services are operational.
-          </span>
+          <strong>GitLab 인스턴스가 정상 작동 중이에요</strong>
+          <span className="health-detail">모든 핵심 서비스가 정상입니다.</span>
         </div>
         <span>
           <span className="status-dot green" />
-          {workspace.uptime} uptime{" "}
-          <span className="health-period">/ 30 days</span>
+          {workspace.uptime} 가동률{" "}
+          <span className="health-period">/ 30일</span>
         </span>
       </div>
       <MetricCards />
       <div className="overview-main-grid">
         <section className="panel activity-panel">
           <PanelHeading
-            title="Pipeline activity"
-            description="Small commits. Steady momentum."
+            title="파이프라인 현황"
+            description="작은 커밋이 모여, 꾸준한 변화를 만듭니다."
           >
-            <div className="segmented" aria-label="Pipeline chart date range">
+            <div className="segmented" aria-label="파이프라인 조회 기간">
               {([7, 30] as const).map((value) => (
                 <button
                   key={value}
@@ -100,31 +99,31 @@ export function Overview() {
                   className={range === value ? "selected" : ""}
                   onClick={() => setRange(value)}
                 >
-                  {value} days
+                  {value}일
                 </button>
               ))}
             </div>
           </PanelHeading>
           <div className="chart-summary">
             <span className="chart-total">
-              {(passed + failed).toLocaleString("en-US")}
+              {(passed + failed).toLocaleString("ko-KR")}
             </span>
-            <span>pipelines in {range} days</span>
+            <span>최근 {range}일 파이프라인</span>
             <div className="chart-legend">
               <span>
                 <i className="legend-dot violet" />
-                Passed
+                성공
               </span>
               <span>
                 <i className="legend-dot amber" />
-                Failed
+                실패
               </span>
             </div>
           </div>
           <div
             className="pipeline-chart"
             role="img"
-            aria-label={`${range}-day pipeline activity: ${passed} passed and ${failed} failed`}
+            aria-label={`최근 ${range}일 파이프라인 현황: 성공 ${passed}건, 실패 ${failed}건`}
           >
             <ResponsiveContainer
               width="100%"
@@ -182,7 +181,7 @@ export function Overview() {
                 <Area
                   type="monotone"
                   dataKey="passed"
-                  name="Passed"
+                  name="성공"
                   stroke="#8a76d6"
                   strokeWidth={2.5}
                   fill="url(#pipeline-fill)"
@@ -191,7 +190,7 @@ export function Overview() {
                 <Area
                   type="monotone"
                   dataKey="failed"
-                  name="Failed"
+                  name="실패"
                   stroke="#d5a05a"
                   strokeWidth={1.5}
                   fill="transparent"
@@ -203,25 +202,25 @@ export function Overview() {
           <div className="chart-bottom">
             <span>
               <GitBranch size={14} />
-              Every pipeline is a step forward.
+              파이프라인과 함께 개발이 이어집니다.
             </span>
-            <span>Sample data · {range} days</span>
+            <span>예시 데이터 · {range}일</span>
           </div>
         </section>
         <section className="panel capacity-panel">
           <PanelHeading
-            title="Runner fleet"
-            description="Ready when your team is."
+            title="러너 현황"
+            description="팀의 다음 작업을 준비하고 있어요."
           />
           <Link
             href="/runners/"
             className="capacity-visual"
-            aria-label="View all 16 runners, 12 online"
+            aria-label="전체 러너 16대 보기, 12대 온라인"
           >
             <svg
               viewBox="0 0 216 184"
               role="img"
-              aria-label="75 percent of runners online"
+              aria-label="전체 러너의 75%가 온라인"
             >
               <circle
                 cx="108"
@@ -251,10 +250,10 @@ export function Overview() {
                 <strong>{online}</strong>
                 <span>/ {runners.length}</span>
               </span>
-              <span>runners online</span>
+              <span>온라인 러너</span>
               <span className="capacity-health">
                 <span className="status-dot green" />
-                Looking good
+                정상 운영 중
               </span>
             </div>
           </Link>
@@ -267,12 +266,12 @@ export function Overview() {
                 <strong>
                   {runners.filter((runner) => runner.status === status).length}
                 </strong>
-                <span>{status}</span>
+                <span>{runnerStatusLabels[status]}</span>
               </div>
             ))}
           </div>
           <Link href="/runners/" className="panel-footer-link">
-            Manage runners
+            러너 관리
             <ArrowRight size={16} />
           </Link>
         </section>
@@ -280,10 +279,10 @@ export function Overview() {
       <div className="overview-bottom-grid">
         <section className="panel attention-panel">
           <PanelHeading
-            title="Worth a look"
-            description="The right things, on your radar."
+            title="확인하면 좋은 소식"
+            description="지금 살펴볼 운영 소식을 모았어요."
           >
-            <span className="count-badge">{attentionItems.length} updates</span>
+            <span className="count-badge">{attentionItems.length} 건</span>
           </PanelHeading>
           <div className="attention-list">
             {attentionItems.map((item) => {
@@ -317,13 +316,13 @@ export function Overview() {
             <span className="upgrade-icon">
               <Layers3 size={20} />
             </span>
-            <span className="count-badge">UP NEXT</span>
+            <span className="count-badge">다음 단계</span>
           </div>
           <h2>
-            A little prep.
-            <br /> A smoother upgrade.
+            차근차근 준비하는,
+            <br /> 안정적인 업그레이드.
           </h2>
-          <p>Your next version is within reach.</p>
+          <p>다음 버전으로, 한 걸음 더 가까이.</p>
           <div className="version-preview">
             <span>{upgrade.current}</span>
             <ArrowRight size={16} />
@@ -332,7 +331,7 @@ export function Overview() {
           <div className="upgrade-progress-label">
             <span>
               <CheckCheck size={14} />
-              {completed.length} of {upgradeTotal} checks complete
+              {upgradeTotal}개 중 {completed.length}개 완료
             </span>
             <strong>{percent}%</strong>
           </div>
@@ -340,7 +339,7 @@ export function Overview() {
             <span style={{ width: `${percent}%` }} />
           </div>
           <Link href="/upgrade/" className="upgrade-preview-link">
-            Continue your upgrade plan
+            업그레이드 준비 이어가기
             <ArrowRight size={16} />
           </Link>
         </section>
@@ -348,7 +347,7 @@ export function Overview() {
       <div className="overview-footnote">
         <ShieldCheck size={15} />
         <span>
-          Built for peace of mind. This workspace uses fictional data only.
+          안심하고 둘러보세요. 이 워크스페이스는 가짜 데이터만 사용합니다.
         </span>
       </div>
     </>
